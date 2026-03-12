@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hilos Costura - PCP Confecciones</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --success: #059669;
+            --danger: #dc2626;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --white: #ffffff;
+            --row-group-a: #d9e6ff;
+            --row-group-b: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Calibri, "Segoe UI", sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+        }
+
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            height: 55px;
+            padding: 0 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .brand {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-800);
+            border-radius: 7px;
+            padding: 7px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+        }
+
+        .btn:hover {
+            background: var(--gray-100);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .container {
+            padding: 12px 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: calc(100vh - 55px);
+        }
+
+        .toolbar {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-700);
+        }
+
+        .filter-select {
+            border: 1px solid var(--gray-300);
+            border-radius: 7px;
+            padding: 6px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--white);
+            color: var(--gray-800);
+            min-width: 130px;
+        }
+
+        .filter-select.small {
+            min-width: 110px;
+        }
+
+        .switch-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-left: 4px;
+            user-select: none;
+        }
+
+        .switch-inline input[type="checkbox"] {
+            width: 38px;
+            height: 21px;
+            appearance: none;
+            background: var(--gray-300);
+            border-radius: 999px;
+            position: relative;
+            cursor: pointer;
+            transition: background .18s ease;
+            border: none;
+            outline: none;
+        }
+
+        .switch-inline input[type="checkbox"]::before {
+            content: "";
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #fff;
+            top: 3px;
+            left: 3px;
+            transition: transform .18s ease;
+        }
+
+        .switch-inline input[type="checkbox"]:checked {
+            background: var(--primary);
+        }
+
+        .switch-inline input[type="checkbox"]:checked::before {
+            transform: translateX(17px);
+        }
+
+        .switch-inline label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-700);
+            cursor: pointer;
+        }
+
+        .meta-pill {
+            border: 1px solid var(--gray-300);
+            border-radius: 999px;
+            padding: 5px 10px;
+            background: var(--gray-50);
+            color: var(--gray-700);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-msg {
+            min-height: 18px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-700);
+            padding: 0 2px;
+        }
+
+        .status-msg.ok {
+            color: var(--success);
+        }
+
+        .status-msg.error {
+            color: var(--danger);
+        }
+
+        .loader {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--gray-700);
+            font-weight: 700;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .table-wrap {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            overflow: auto;
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            min-width: 980px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 12px;
+        }
+
+        th {
+            background: rgb(0, 112, 192);
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.45px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: left;
+            padding: 8px 7px;
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 6px 7px;
+            border-bottom: 1px solid var(--gray-100);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--gray-800);
+        }
+
+        tr.group-a { background: var(--row-group-a); }
+        tr.group-b { background: var(--row-group-b); }
+
+        tr.group-a:hover, tr.group-b:hover {
+            box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.12);
+        }
+
+        .cell-op {
+            font-weight: 700;
+        }
+
+        .cell-rsv {
+            text-align: right;
+            font-weight: 700;
+        }
+
+        .no-data {
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 13px;
+            padding: 28px 10px;
+        }
+
+        .hilo-select {
+            width: 100%;
+            min-width: 150px;
+            border: 1px solid var(--gray-300);
+            border-radius: 7px;
+            background: #fff;
+            padding: 4px 7px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gray-800);
+            height: 28px;
+            font-family: Calibri, "Segoe UI", sans-serif;
+        }
+
+        .hilo-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .hilo-select:disabled {
+            background: var(--gray-100);
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 860px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">HILOS COSTURA - PCP Confecciones</div>
+        <div class="header-actions">
+            <button type="button" class="btn btn-primary" onclick="reloadData()">Refrescar</button>
+            <a class="btn" href="index.html">&larr; Volver</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <span class="filter-label">Filtro:</span>
+                <select id="filter-hilo-dato" class="filter-select" onchange="onFilterChange(this.value)">
+                    <option value="ALL">Todos</option>
+                    <option value="CON">Con dato</option>
+                    <option value="TENIDO">EN TE&#209;IDO</option>
+                    <option value="SIN">Sin dato</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <span class="filter-label">CLIENTE:</span>
+                <select id="filter-cliente" class="filter-select small" onchange="onClientFilterChange(this.value)">
+                    <option value="ALL">Todos</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <span class="filter-label">RSV:</span>
+                <select id="filter-rsv" class="filter-select small" onchange="onRsvFilterChange(this.value)">
+                    <option value="ALL">Todos</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <span class="filter-label">COLOR:</span>
+                <select id="filter-color" class="filter-select small" onchange="onColorFilterChange(this.value)">
+                    <option value="ALL">Todos</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <span class="filter-label">OP:</span>
+                <select id="filter-op" class="filter-select small" onchange="onOpFilterChange(this.value)">
+                    <option value="ALL">Todos</option>
+                </select>
+            </div>
+            <div class="switch-inline">
+                <input type="checkbox" id="chk-para-todo" onchange="onParaTodoChange(this.checked)">
+                <label for="chk-para-todo">Para Todo</label>
+            </div>
+            <span id="meta-registros" class="meta-pill">0 registros</span>
+            <div id="loader" class="loader">
+                <div class="spinner"></div>
+                <span>Cargando datos...</span>
+            </div>
+        </div>
+
+        <div id="status-msg" class="status-msg"></div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">RSV</th>
+                        <th style="width: 130px;">CLIENTE</th>
+                        <th style="width: 180px;">ESTILO</th>
+                        <th style="width: 150px;">COLOR</th>
+                        <th style="width: 110px;">OP</th>
+                        <th style="width: 170px;">HILO COSTURA</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-hilos-costura">
+                    <tr><td class="no-data" colspan="6">Cargando registros...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby2WZW0qUf09n8XMB5tZW4gVA4hRzTIWzgqYcbYKanQrdQu6PfYaDVs6jX43oGNeg00fw/exec";
+
+        const FILTER_ALL = "ALL";
+        const FILTER_CON = "CON";
+        const FILTER_TENIDO = "TENIDO";
+        const FILTER_SIN = "SIN";
+
+        const HILO_OPTIONS = ["PDTE", "EN TE\u00D1IDO", "OK", "OK COMPRA", "OK RE-ASIGNADO"];
+        const HILO_CANON = {
+            "PDTE": "PDTE",
+            "EN TE\u00D1IDO": "EN TE\u00D1IDO",
+            "OK": "OK",
+            "OK COMPRA": "OK COMPRA",
+            "OK RE-ASIGNADO": "OK RE-ASIGNADO"
+        };
+
+        let rawHeaders = [];
+        let allRows = [];
+        let selectedFilter = FILTER_ALL;
+        let selectedClientFilter = FILTER_ALL;
+        let selectedRsvFilter = FILTER_ALL;
+        let selectedColorFilter = FILTER_ALL;
+        let selectedOpFilter = FILTER_ALL;
+        let applyParaTodo = false;
+        let hiloColHeaderName = "HILO COSTURA";
+        const savingGroupKeys = new Set();
+
+        function normalizeHeaderName(value) {
+            return String(value || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/g, "");
+        }
+
+        function normalizeText(value) {
+            return String(value || "").toUpperCase().trim();
+        }
+
+        function normalizeClientName(clientName) {
+            if (!clientName) return "";
+            const name = clientName.toString().toUpperCase();
+            if (name.includes("LACOSTE")) return "LAC";
+            if (name.includes("ATHLETA, INC.")) return "ATH";
+            if (name.includes("ALLBIRDS")) return "ALLB";
+            if (name.includes("BANANA REPUBLIC, LLC")) return "BNN";
+            if (name.includes("THEORY LLC,")) return "THE";
+            if (name.includes("DISH & DUER")) return "DDU";
+            if (name.includes("SKECHERS PERFORMANCE")) return "SKE";
+            if (name.includes("LULULEMON ATHLETICA CANADA INC")) return "LLL";
+            if (name.includes("AM RETAIL S.A.C.")) return "AMR";
+            return clientName;
+        }
+
+        function escapeHtml(text) {
+            return String(text === null || text === undefined ? "" : text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function showLoader(show) {
+            const el = document.getElementById("loader");
+            if (el) el.style.display = show ? "inline-flex" : "none";
+        }
+
+        function setStatus(message, tone) {
+            const el = document.getElementById("status-msg");
+            if (!el) return;
+            el.textContent = message || "";
+            el.className = "status-msg";
+            if (tone === "ok") el.classList.add("ok");
+            if (tone === "error") el.classList.add("error");
+        }
+
+        function findHeaderIndex(headers, candidates) {
+            const normalized = candidates.map(c => normalizeHeaderName(c));
+            for (let i = 0; i < headers.length; i++) {
+                const hNorm = normalizeHeaderName(headers[i]);
+                if (normalized.includes(hNorm)) return i;
+            }
+            return -1;
+        }
+
+        function canonicalizeHiloValue(value) {
+            const raw = String(value || "").trim();
+            if (!raw) return "PDTE";
+            const norm = normalizeText(raw);
+            if (HILO_CANON[norm]) return HILO_CANON[norm];
+            return raw;
+        }
+
+        function rowHasSheetData(row) {
+            return String(row.hiloRaw || "").trim() !== "";
+        }
+
+        function makeGroupKey(op, color) {
+            const opNorm = String(op || "").trim().toUpperCase();
+            const colorNorm = String(color || "").trim().toUpperCase();
+            if (!opNorm || !colorNorm) return "";
+            return opNorm + "||" + colorNorm;
+        }
+
+        function getRowsAfterHiloDataFilter() {
+            if (selectedFilter === FILTER_CON) return allRows.filter(rowHasSheetData);
+            if (selectedFilter === FILTER_TENIDO) return allRows.filter(r => canonicalizeHiloValue(r.hiloRaw) === "EN TE\u00D1IDO");
+            if (selectedFilter === FILTER_SIN) return allRows.filter(r => !rowHasSheetData(r));
+            return allRows;
+        }
+
+        function rowMatchesCurrentSideFilters(row, excludeKey) {
+            if (excludeKey !== "client" && selectedClientFilter !== FILTER_ALL && row.clienteNorm !== selectedClientFilter) return false;
+            if (excludeKey !== "rsv" && selectedRsvFilter !== FILTER_ALL && String(row.rsv || "") !== selectedRsvFilter) return false;
+            if (excludeKey !== "color" && selectedColorFilter !== FILTER_ALL && String(row.color || "") !== selectedColorFilter) return false;
+            if (excludeKey !== "op" && selectedOpFilter !== FILTER_ALL && String(row.op || "") !== selectedOpFilter) return false;
+            return true;
+        }
+
+        function getRowsForFilterOptions(filterKey) {
+            return getRowsAfterHiloDataFilter().filter(row => rowMatchesCurrentSideFilters(row, filterKey));
+        }
+
+        function getFilteredRows() {
+            const rows = getRowsAfterHiloDataFilter().filter(row => rowMatchesCurrentSideFilters(row, null));
+            rows.sort((a, b) => {
+                const byClient = String(a.clienteNorm || "").localeCompare(String(b.clienteNorm || ""), undefined, { sensitivity: "base" });
+                if (byClient !== 0) return byClient;
+
+                const byRsv = String(a.rsv || "").localeCompare(String(b.rsv || ""), undefined, { numeric: true, sensitivity: "base" });
+                if (byRsv !== 0) return byRsv;
+
+                return String(a.color || "").localeCompare(String(b.color || ""), undefined, { sensitivity: "base" });
+            });
+            return rows;
+        }
+
+        function fillSelectOptions(selectId, values, selectedValue) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            const allOpts = [FILTER_ALL].concat(values);
+            let finalSelected = selectedValue;
+            if (!allOpts.includes(finalSelected)) finalSelected = FILTER_ALL;
+
+            select.innerHTML = allOpts.map(v => {
+                const label = (v === FILTER_ALL) ? "Todos" : v;
+                const selected = (v === finalSelected) ? " selected" : "";
+                return "<option value=\"" + escapeHtml(v) + "\"" + selected + ">" + escapeHtml(label) + "</option>";
+            }).join("");
+
+            return finalSelected;
+        }
+
+        function rebuildRightFilters() {
+            const clientRows = getRowsForFilterOptions("client");
+            const clients = Array.from(new Set(clientRows.map(r => String(r.clienteNorm || "").trim()).filter(Boolean)))
+                .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+            selectedClientFilter = fillSelectOptions("filter-cliente", clients, selectedClientFilter) || FILTER_ALL;
+
+            const rsvRows = getRowsForFilterOptions("rsv");
+            const rsvs = Array.from(new Set(rsvRows.map(r => String(r.rsv || "").trim()).filter(Boolean)))
+                .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+            selectedRsvFilter = fillSelectOptions("filter-rsv", rsvs, selectedRsvFilter) || FILTER_ALL;
+
+            const colorRows = getRowsForFilterOptions("color");
+            const colors = Array.from(new Set(colorRows.map(r => String(r.color || "").trim()).filter(Boolean)))
+                .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+            selectedColorFilter = fillSelectOptions("filter-color", colors, selectedColorFilter) || FILTER_ALL;
+
+            const opRows = getRowsForFilterOptions("op");
+            const ops = Array.from(new Set(opRows.map(r => String(r.op || "").trim()).filter(Boolean)))
+                .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+            selectedOpFilter = fillSelectOptions("filter-op", ops, selectedOpFilter) || FILTER_ALL;
+        }
+
+        function updateMeta() {
+            const meta = document.getElementById("meta-registros");
+            if (!meta) return;
+            meta.textContent = getFilteredRows().length.toLocaleString("es-ES") + " registros";
+        }
+
+        function onFilterChange(value) {
+            selectedFilter = value || FILTER_ALL;
+            rebuildRightFilters();
+            renderTable();
+        }
+
+        function onClientFilterChange(value) {
+            selectedClientFilter = value || FILTER_ALL;
+            rebuildRightFilters();
+            renderTable();
+        }
+
+        function onRsvFilterChange(value) {
+            selectedRsvFilter = value || FILTER_ALL;
+            rebuildRightFilters();
+            renderTable();
+        }
+
+        function onColorFilterChange(value) {
+            selectedColorFilter = value || FILTER_ALL;
+            rebuildRightFilters();
+            renderTable();
+        }
+
+        function onOpFilterChange(value) {
+            selectedOpFilter = value || FILTER_ALL;
+            rebuildRightFilters();
+            renderTable();
+        }
+
+        function onParaTodoChange(checked) {
+            applyParaTodo = !!checked;
+        }
+
+        function buildSelectHtml(row) {
+            const current = canonicalizeHiloValue(row.hiloRaw);
+            const opts = HILO_OPTIONS.slice();
+            if (!opts.includes(current)) opts.unshift(current);
+
+            const optionsHtml = opts.map(opt => {
+                const selected = opt === current ? " selected" : "";
+                return "<option value=\"" + escapeHtml(opt) + "\"" + selected + ">" + escapeHtml(opt) + "</option>";
+            }).join("");
+
+            return "<select class=\"hilo-select\" data-row-index=\"" + row.rawIndex + "\" onchange=\"handleHiloChange(" + row.rawIndex + ", this.value, this)\">" + optionsHtml + "</select>";
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById("tbody-hilos-costura");
+            const filtered = getFilteredRows();
+            updateMeta();
+
+            if (!filtered.length) {
+                const msg = selectedFilter === FILTER_CON
+                    ? "No hay registros con dato en HILO COSTURA para los filtros seleccionados."
+                    : (selectedFilter === FILTER_TENIDO
+                        ? "No hay registros con HILO COSTURA = EN TE\u00D1IDO para los filtros seleccionados."
+                        : (selectedFilter === FILTER_SIN
+                            ? "No hay registros sin dato en HILO COSTURA para los filtros seleccionados."
+                            : "No hay registros para los filtros seleccionados."));
+                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"6\">" + escapeHtml(msg) + "</td></tr>";
+                return;
+            }
+
+            let lastColorKey = null;
+            let currentBandClass = "group-a";
+
+            tbody.innerHTML = filtered.map((row) => {
+                const colorKey = String(row.color || "").trim().toUpperCase();
+                if (lastColorKey !== null && colorKey !== lastColorKey) {
+                    currentBandClass = (currentBandClass === "group-a") ? "group-b" : "group-a";
+                }
+                lastColorKey = colorKey;
+
+                const trClass = currentBandClass;
+                return ""
+                    + "<tr class=\"" + trClass + "\">"
+                    + "<td class=\"cell-rsv\">" + escapeHtml(row.rsv) + "</td>"
+                    + "<td title=\"" + escapeHtml(row.clienteNorm) + "\">" + escapeHtml(row.clienteNorm) + "</td>"
+                    + "<td title=\"" + escapeHtml(row.estilo) + "\">" + escapeHtml(row.estilo) + "</td>"
+                    + "<td title=\"" + escapeHtml(row.color) + "\">" + escapeHtml(row.color) + "</td>"
+                    + "<td class=\"cell-op\" title=\"" + escapeHtml(row.op) + "\">" + escapeHtml(row.op) + "</td>"
+                    + "<td>" + buildSelectHtml(row) + "</td>"
+                    + "</tr>";
+            }).join("");
+        }
+
+        async function saveHiloValueForRow(row, newValue) {
+            const payload = {
+                action: "update",
+                row: row.rawIndex,
+                colName: hiloColHeaderName,
+                value: newValue,
+                sourceOp: row.sourceOp,
+                sourceCorte: row.sourceCorte,
+                sourceOpTela: row.sourceOpTela,
+                sourcePartida: row.sourcePartida,
+                sourceColor: row.sourceColor
+            };
+
+            const response = await fetch(WEB_APP_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            });
+
+            const responseText = await response.text();
+            let result = null;
+            try {
+                result = JSON.parse(responseText);
+            } catch (e) {
+                result = null;
+            }
+
+            if (!response.ok || !result || result.result !== "success") {
+                const msg = (result && result.message) ? result.message : "Error al guardar en sheet.";
+                throw new Error(msg);
+            }
+        }
+
+        async function handleHiloChange(rawIndex, selectedValue, selectElement) {
+            const sourceRow = allRows.find(r => r.rawIndex === rawIndex);
+            if (!sourceRow) return;
+
+            const groupKey = makeGroupKey(sourceRow.op, sourceRow.color);
+            const lockKey = applyParaTodo ? "__PARA_TODO__" : (groupKey || ("ROW|" + rawIndex));
+            if (savingGroupKeys.has(lockKey)) return;
+            savingGroupKeys.add(lockKey);
+
+            let targets = [];
+            if (applyParaTodo) {
+                targets = getFilteredRows();
+            } else {
+                targets = groupKey
+                    ? allRows.filter(r => makeGroupKey(r.op, r.color) === groupKey)
+                    : [sourceRow];
+            }
+            if (!targets.length) targets = [sourceRow];
+
+            const previousByIndex = {};
+            targets.forEach(r => {
+                previousByIndex[r.rawIndex] = r.hiloRaw;
+                r.hiloRaw = selectedValue;
+            });
+
+            renderTable();
+            setStatus("Guardando " + targets.length + " fila(s)...", "");
+
+            try {
+                await Promise.all(targets.map(r => saveHiloValueForRow(r, selectedValue)));
+                if (applyParaTodo) {
+                    setStatus("Actualizado en " + targets.length + " fila(s) visibles (Para Todo).", "ok");
+                } else {
+                    const opLabel = String(sourceRow.op || "").trim() || "(sin OP)";
+                    const colorLabel = String(sourceRow.color || "").trim() || "(sin COLOR)";
+                    setStatus("Actualizado: " + targets.length + " fila(s) para OP " + opLabel + " + COLOR " + colorLabel + ".", "ok");
+                }
+            } catch (error) {
+                targets.forEach(r => { r.hiloRaw = previousByIndex[r.rawIndex]; });
+                renderTable();
+                setStatus("Error al guardar: " + (error && error.message ? error.message : String(error)), "error");
+                console.error(error);
+            } finally {
+                savingGroupKeys.delete(lockKey);
+            }
+        }
+
+        function processData(data) {
+            if (!Array.isArray(data) || data.length === 0) {
+                throw new Error("Datos vacios del sheet.");
+            }
+
+            rawHeaders = (data[0] || []).map(h => String(h || "").trim());
+            const rows = data.slice(1);
+
+            const colRsv = findHeaderIndex(rawHeaders, ["RSV"]);
+            const colCliente = findHeaderIndex(rawHeaders, ["CLIENTE"]);
+            const colEstilo = findHeaderIndex(rawHeaders, ["ESTILO"]);
+            const colColor = findHeaderIndex(rawHeaders, ["COLOR"]);
+            const colOp = findHeaderIndex(rawHeaders, ["OP"]);
+            const colHilo = findHeaderIndex(rawHeaders, ["HILO COSTURA", "HILO_COSTURA"]);
+
+            const colCorte = findHeaderIndex(rawHeaders, ["CORTE"]);
+            const colOpTela = findHeaderIndex(rawHeaders, ["OP TELA", "OP_TELA"]);
+            const colPartida = findHeaderIndex(rawHeaders, ["PARTIDA"]);
+
+            const required = [
+                { idx: colRsv, name: "RSV" },
+                { idx: colCliente, name: "CLIENTE" },
+                { idx: colEstilo, name: "ESTILO" },
+                { idx: colColor, name: "COLOR" },
+                { idx: colOp, name: "OP" },
+                { idx: colHilo, name: "HILO COSTURA" }
+            ];
+            const missing = required.filter(c => c.idx === -1).map(c => c.name);
+            if (missing.length) {
+                throw new Error("Faltan columnas requeridas: " + missing.join(", "));
+            }
+
+            hiloColHeaderName = rawHeaders[colHilo] || "HILO COSTURA";
+
+            allRows = rows.map((row, idx) => ({
+                rawIndex: idx + 1,
+                rsv: row[colRsv] || "",
+                cliente: row[colCliente] || "",
+                clienteNorm: normalizeClientName(row[colCliente] || ""),
+                estilo: row[colEstilo] || "",
+                color: row[colColor] || "",
+                op: row[colOp] || "",
+                hiloRaw: row[colHilo] || "",
+                sourceOp: row[colOp] || "",
+                sourceCorte: colCorte !== -1 ? (row[colCorte] || "") : "",
+                sourceOpTela: colOpTela !== -1 ? (row[colOpTela] || "") : "",
+                sourcePartida: colPartida !== -1 ? (row[colPartida] || "") : "",
+                sourceColor: row[colColor] || ""
+            }));
+        }
+
+        async function reloadData() {
+            showLoader(true);
+            setStatus("", "");
+
+            try {
+                const response = await fetch(WEB_APP_URL);
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
+                }
+                const data = await response.json();
+                processData(data);
+                rebuildRightFilters();
+                renderTable();
+            } catch (error) {
+                console.error("Error cargando datos:", error);
+                const tbody = document.getElementById("tbody-hilos-costura");
+                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"6\">Error al cargar datos: " + escapeHtml(error.message || String(error)) + "</td></tr>";
+                document.getElementById("meta-registros").textContent = "0 registros";
+                setStatus("No se pudo cargar la tabla.", "error");
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", reloadData);
+    </script>
+</body>
+</html>
