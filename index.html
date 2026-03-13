@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hilos Costura - PCP Confecciones</title>
+    <title>Hilo Costura - PCP Textil</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -37,26 +37,29 @@
         header {
             background: var(--white);
             border-bottom: 1px solid var(--gray-200);
-            height: 55px;
-            padding: 0 22px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px;
             position: sticky;
             top: 0;
             z-index: 20;
+            overflow-x: auto;
         }
 
         .brand {
             font-size: 16px;
             font-weight: 700;
             color: var(--gray-800);
+            white-space: nowrap;
+            flex: 0 0 auto;
         }
 
         .header-actions {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex: 0 0 auto;
         }
 
         .btn {
@@ -90,23 +93,36 @@
             border-color: var(--primary-dark);
         }
 
+        .btn-icon {
+            width: 34px;
+            min-width: 34px;
+            height: 34px;
+            min-height: 34px;
+            border-radius: 999px;
+            padding: 0;
+            font-size: 17px;
+            line-height: 1;
+        }
+
         .container {
-            padding: 12px 20px 16px;
+            padding: 6px 12px 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            min-height: calc(100vh - 55px);
+            gap: 6px;
+            min-height: calc(100vh - 72px);
         }
 
         .toolbar {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 10px;
-            padding: 9px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            flex: 1 1 auto;
+            min-width: max-content;
         }
 
         .toolbar-group {
@@ -196,11 +212,11 @@
         }
 
         .status-msg {
-            min-height: 18px;
+            min-height: 0;
             font-size: 12px;
             font-weight: 700;
             color: var(--gray-700);
-            padding: 0 2px;
+            padding: 0;
         }
 
         .status-msg.ok {
@@ -211,6 +227,34 @@
             color: var(--danger);
         }
 
+        .tabs-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .tab-btn {
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-700);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .tab-btn:hover {
+            background: var(--gray-100);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
         .loader {
             display: none;
             align-items: center;
@@ -218,6 +262,39 @@
             font-size: 12px;
             color: var(--gray-700);
             font-weight: 700;
+        }
+
+        .saving-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .saving-modal.show {
+            display: flex;
+        }
+
+        .saving-modal-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 16px 18px;
+            min-width: 220px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
+        }
+
+        .saving-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray-800);
         }
 
         .spinner {
@@ -326,27 +403,28 @@
             .container {
                 padding: 10px;
             }
+
+            header {
+                padding: 8px 10px;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="brand">HILOS COSTURA - PCP Confecciones</div>
-        <div class="header-actions">
-            <button type="button" class="btn btn-primary" onclick="reloadData()">Refrescar</button>
-            <a class="btn" href="index.html">&larr; Volver</a>
-        </div>
-    </header>
-
-    <div class="container">
         <div class="toolbar">
+            <div class="toolbar-group">
+                <div class="brand">HILO COSTURA - PCP Textil</div>
+            </div>
             <div class="toolbar-group">
                 <span class="filter-label">Filtro:</span>
                 <select id="filter-hilo-dato" class="filter-select" onchange="onFilterChange(this.value)">
                     <option value="ALL">Todos</option>
-                    <option value="CON">Con dato</option>
-                    <option value="TENIDO">EN TE&#209;IDO</option>
-                    <option value="SIN">Sin dato</option>
+                    <option value="PENDIENTE">PENDIENTE</option>
+                    <option value="EN LABORATORIO">EN LABORATORIO</option>
+                    <option value="POR TE&#209;IR">POR TE&#209;IR</option>
+                    <option value="EN CALIDAD">EN CALIDAD</option>
+                    <option value="DESPACHADO">DESPACHADO</option>
                 </select>
             </div>
             <div class="toolbar-group">
@@ -383,8 +461,18 @@
                 <span>Cargando datos...</span>
             </div>
         </div>
+        <div class="header-actions">
+            <button type="button" class="btn btn-primary btn-icon" onclick="reloadData()" title="Refrescar" aria-label="Refrescar">&#x21bb;</button>
+        </div>
+    </header>
+
+    <div class="container">
 
         <div id="status-msg" class="status-msg"></div>
+        <div class="tabs-bar">
+            <button id="tab-por-despachar" type="button" class="tab-btn active" onclick="onTabChange('POR_DESPACHAR')">POR DESPACHAR</button>
+            <button id="tab-despachado" type="button" class="tab-btn" onclick="onTabChange('DESPACHADO')">DESPACHADO</button>
+        </div>
 
         <div class="table-wrap">
             <table>
@@ -405,31 +493,58 @@
         </div>
     </div>
 
+    <div id="saving-modal" class="saving-modal" aria-live="polite" aria-hidden="true">
+        <div class="saving-modal-card">
+            <div class="spinner" aria-hidden="true"></div>
+            <span id="saving-modal-text" class="saving-text">Guardando datos...</span>
+        </div>
+    </div>
+
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby2WZW0qUf09n8XMB5tZW4gVA4hRzTIWzgqYcbYKanQrdQu6PfYaDVs6jX43oGNeg00fw/exec";
 
         const FILTER_ALL = "ALL";
-        const FILTER_CON = "CON";
-        const FILTER_TENIDO = "TENIDO";
-        const FILTER_SIN = "SIN";
+        const FILTER_PENDIENTE = "PENDIENTE";
+        const FILTER_EN_LABORATORIO = "EN LABORATORIO";
+        const FILTER_POR_TENIR = "POR TE\u00D1IR";
+        const FILTER_EN_CALIDAD = "EN CALIDAD";
+        const FILTER_DESPACHADO = "DESPACHADO";
 
-        const HILO_OPTIONS = ["PDTE", "EN TE\u00D1IDO", "OK", "OK COMPRA", "OK RE-ASIGNADO"];
+        const TAB_POR_DESPACHAR = "POR_DESPACHAR";
+        const TAB_DESPACHADO = "DESPACHADO";
+
+        const HILO_OPTIONS = [
+            FILTER_PENDIENTE,
+            FILTER_EN_LABORATORIO,
+            FILTER_POR_TENIR,
+            FILTER_EN_CALIDAD,
+            FILTER_DESPACHADO
+        ];
         const HILO_CANON = {
-            "PDTE": "PDTE",
-            "EN TE\u00D1IDO": "EN TE\u00D1IDO",
-            "OK": "OK",
-            "OK COMPRA": "OK COMPRA",
-            "OK RE-ASIGNADO": "OK RE-ASIGNADO"
+            "PENDIENTE": FILTER_PENDIENTE,
+            "PDTE": FILTER_PENDIENTE,
+            "EN LABORATORIO": FILTER_EN_LABORATORIO,
+            "POR TE\u00D1IR": FILTER_POR_TENIR,
+            "POR TENIR": FILTER_POR_TENIR,
+            "EN TE\u00D1IDO": FILTER_POR_TENIR,
+            "EN TENIDO": FILTER_POR_TENIR,
+            "EN CALIDAD": FILTER_EN_CALIDAD,
+            "OK": FILTER_EN_CALIDAD,
+            "OK COMPRA": FILTER_EN_CALIDAD,
+            "OK RE-ASIGNADO": FILTER_EN_CALIDAD,
+            "DESPACHADO": FILTER_DESPACHADO
         };
 
         let rawHeaders = [];
         let allRows = [];
         let selectedFilter = FILTER_ALL;
+        let selectedTab = TAB_POR_DESPACHAR;
         let selectedClientFilter = FILTER_ALL;
         let selectedRsvFilter = FILTER_ALL;
         let selectedColorFilter = FILTER_ALL;
         let selectedOpFilter = FILTER_ALL;
         let applyParaTodo = false;
+        let uiBusy = false;
         let hiloColHeaderName = "HILO COSTURA";
         const savingGroupKeys = new Set();
 
@@ -474,6 +589,22 @@
             if (el) el.style.display = show ? "inline-flex" : "none";
         }
 
+        function setUiBusy(show, message) {
+            uiBusy = !!show;
+            const modal = document.getElementById("saving-modal");
+            const modalText = document.getElementById("saving-modal-text");
+            if (modalText && message) modalText.textContent = message;
+            if (modal) {
+                modal.classList.toggle("show", uiBusy);
+                modal.setAttribute("aria-hidden", uiBusy ? "false" : "true");
+            }
+
+            const controls = document.querySelectorAll("button, select, input[type='checkbox']");
+            controls.forEach(ctrl => {
+                ctrl.disabled = uiBusy;
+            });
+        }
+
         function setStatus(message, tone) {
             const el = document.getElementById("status-msg");
             if (!el) return;
@@ -494,14 +625,15 @@
 
         function canonicalizeHiloValue(value) {
             const raw = String(value || "").trim();
-            if (!raw) return "PDTE";
+            if (!raw) return FILTER_PENDIENTE;
             const norm = normalizeText(raw);
             if (HILO_CANON[norm]) return HILO_CANON[norm];
             return raw;
         }
 
-        function rowHasSheetData(row) {
-            return String(row.hiloRaw || "").trim() !== "";
+        function rowMatchesTab(row) {
+            const isDespachado = canonicalizeHiloValue(row.hiloRaw) === FILTER_DESPACHADO;
+            return selectedTab === TAB_DESPACHADO ? isDespachado : !isDespachado;
         }
 
         function makeGroupKey(op, color) {
@@ -512,10 +644,9 @@
         }
 
         function getRowsAfterHiloDataFilter() {
-            if (selectedFilter === FILTER_CON) return allRows.filter(rowHasSheetData);
-            if (selectedFilter === FILTER_TENIDO) return allRows.filter(r => canonicalizeHiloValue(r.hiloRaw) === "EN TE\u00D1IDO");
-            if (selectedFilter === FILTER_SIN) return allRows.filter(r => !rowHasSheetData(r));
-            return allRows;
+            const tabRows = allRows.filter(rowMatchesTab);
+            if (selectedFilter === FILTER_ALL) return tabRows;
+            return tabRows.filter(r => canonicalizeHiloValue(r.hiloRaw) === selectedFilter);
         }
 
         function rowMatchesCurrentSideFilters(row, excludeKey) {
@@ -590,36 +721,57 @@
         }
 
         function onFilterChange(value) {
+            if (uiBusy) return;
             selectedFilter = value || FILTER_ALL;
             rebuildRightFilters();
             renderTable();
         }
 
+        function setActiveTabUi() {
+            const porDespacharBtn = document.getElementById("tab-por-despachar");
+            const despachadoBtn = document.getElementById("tab-despachado");
+            if (porDespacharBtn) porDespacharBtn.classList.toggle("active", selectedTab === TAB_POR_DESPACHAR);
+            if (despachadoBtn) despachadoBtn.classList.toggle("active", selectedTab === TAB_DESPACHADO);
+        }
+
+        function onTabChange(tabValue) {
+            if (uiBusy) return;
+            selectedTab = (tabValue === TAB_DESPACHADO) ? TAB_DESPACHADO : TAB_POR_DESPACHAR;
+            setActiveTabUi();
+            rebuildRightFilters();
+            renderTable();
+        }
+
         function onClientFilterChange(value) {
+            if (uiBusy) return;
             selectedClientFilter = value || FILTER_ALL;
             rebuildRightFilters();
             renderTable();
         }
 
         function onRsvFilterChange(value) {
+            if (uiBusy) return;
             selectedRsvFilter = value || FILTER_ALL;
             rebuildRightFilters();
             renderTable();
         }
 
         function onColorFilterChange(value) {
+            if (uiBusy) return;
             selectedColorFilter = value || FILTER_ALL;
             rebuildRightFilters();
             renderTable();
         }
 
         function onOpFilterChange(value) {
+            if (uiBusy) return;
             selectedOpFilter = value || FILTER_ALL;
             rebuildRightFilters();
             renderTable();
         }
 
         function onParaTodoChange(checked) {
+            if (uiBusy) return;
             applyParaTodo = !!checked;
         }
 
@@ -642,13 +794,10 @@
             updateMeta();
 
             if (!filtered.length) {
-                const msg = selectedFilter === FILTER_CON
-                    ? "No hay registros con dato en HILO COSTURA para los filtros seleccionados."
-                    : (selectedFilter === FILTER_TENIDO
-                        ? "No hay registros con HILO COSTURA = EN TE\u00D1IDO para los filtros seleccionados."
-                        : (selectedFilter === FILTER_SIN
-                            ? "No hay registros sin dato en HILO COSTURA para los filtros seleccionados."
-                            : "No hay registros para los filtros seleccionados."));
+                const tabLabel = selectedTab === TAB_DESPACHADO ? "DESPACHADO" : "POR DESPACHAR";
+                const msg = selectedFilter === FILTER_ALL
+                    ? "No hay registros para la pesta\u00F1a " + tabLabel + " con los filtros seleccionados."
+                    : "No hay registros con HILO COSTURA = " + selectedFilter + " en la pesta\u00F1a " + tabLabel + ".";
                 tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"6\">" + escapeHtml(msg) + "</td></tr>";
                 return;
             }
@@ -676,10 +825,24 @@
             }).join("");
         }
 
+        function isLikelyCorsFetchError(error) {
+            const msg = String(error && error.message ? error.message : error).toLowerCase();
+            if (!msg) return false;
+            return msg.includes("failed to fetch")
+                || msg.includes("networkerror")
+                || msg.includes("cors")
+                || msg.includes("load failed");
+        }
+
         async function saveHiloValueForRow(row, newValue) {
+            const targetRow = Number(row.rawIndex);
+            if (!Number.isFinite(targetRow) || targetRow <= 0) {
+                throw new Error("Fila invalida para guardar en sheet.");
+            }
+
             const payload = {
                 action: "update",
-                row: row.rawIndex,
+                row: targetRow,
                 colName: hiloColHeaderName,
                 value: newValue,
                 sourceOp: row.sourceOp,
@@ -689,27 +852,43 @@
                 sourceColor: row.sourceColor
             };
 
-            const response = await fetch(WEB_APP_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(payload)
-            });
-
-            const responseText = await response.text();
-            let result = null;
             try {
-                result = JSON.parse(responseText);
-            } catch (e) {
-                result = null;
-            }
+                const response = await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
 
-            if (!response.ok || !result || result.result !== "success") {
-                const msg = (result && result.message) ? result.message : "Error al guardar en sheet.";
-                throw new Error(msg);
+                const responseText = await response.text();
+                let result = null;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    result = null;
+                }
+
+                if (!response.ok || !result || result.result !== "success") {
+                    const msg = (result && result.message) ? result.message : "Error al guardar en sheet.";
+                    throw new Error(msg);
+                }
+                return { assumedSuccess: false };
+            } catch (error) {
+                if (!isLikelyCorsFetchError(error)) {
+                    throw error;
+                }
+
+                await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+                return { assumedSuccess: true };
             }
         }
 
         async function handleHiloChange(rawIndex, selectedValue, selectElement) {
+            if (uiBusy) return;
             const sourceRow = allRows.find(r => r.rawIndex === rawIndex);
             if (!sourceRow) return;
 
@@ -727,6 +906,16 @@
                     : [sourceRow];
             }
             if (!targets.length) targets = [sourceRow];
+            const uniqueByRow = new Map();
+            targets.forEach(r => {
+                uniqueByRow.set(r.rawIndex, r);
+            });
+            targets = Array.from(uniqueByRow.values());
+
+            const shouldShowModal = applyParaTodo && targets.length > 0;
+            if (shouldShowModal) {
+                setUiBusy(true, "Guardando datos...");
+            }
 
             const previousByIndex = {};
             targets.forEach(r => {
@@ -738,9 +927,23 @@
             setStatus("Guardando " + targets.length + " fila(s)...", "");
 
             try {
-                await Promise.all(targets.map(r => saveHiloValueForRow(r, selectedValue)));
+                let assumedSuccessCount = 0;
+                for (let i = 0; i < targets.length; i++) {
+                    if (applyParaTodo) {
+                        setStatus("Guardando " + (i + 1) + " de " + targets.length + " fila(s)...", "");
+                    }
+                    const saveResult = await saveHiloValueForRow(targets[i], selectedValue);
+                    if (saveResult && saveResult.assumedSuccess) {
+                        assumedSuccessCount++;
+                    }
+                }
+
                 if (applyParaTodo) {
-                    setStatus("Actualizado en " + targets.length + " fila(s) visibles (Para Todo).", "ok");
+                    if (assumedSuccessCount > 0) {
+                        setStatus("Actualizado en " + targets.length + " fila(s) visibles (Para Todo). Modo compatibilidad local activo.", "ok");
+                    } else {
+                        setStatus("Actualizado en " + targets.length + " fila(s) visibles (Para Todo).", "ok");
+                    }
                 } else {
                     const opLabel = String(sourceRow.op || "").trim() || "(sin OP)";
                     const colorLabel = String(sourceRow.color || "").trim() || "(sin COLOR)";
@@ -752,6 +955,9 @@
                 setStatus("Error al guardar: " + (error && error.message ? error.message : String(error)), "error");
                 console.error(error);
             } finally {
+                if (shouldShowModal) {
+                    setUiBusy(false);
+                }
                 savingGroupKeys.delete(lockKey);
             }
         }
@@ -810,6 +1016,8 @@
         async function reloadData() {
             showLoader(true);
             setStatus("", "");
+            selectedTab = TAB_POR_DESPACHAR;
+            setActiveTabUi();
 
             try {
                 const response = await fetch(WEB_APP_URL);
@@ -831,7 +1039,10 @@
             }
         }
 
-        window.addEventListener("DOMContentLoaded", reloadData);
+        window.addEventListener("DOMContentLoaded", () => {
+            setActiveTabUi();
+            reloadData();
+        });
     </script>
 </body>
 </html>
