@@ -512,6 +512,7 @@
 
         const TAB_POR_DESPACHAR = "POR_DESPACHAR";
         const TAB_DESPACHADO = "DESPACHADO";
+        const EXCLUDED_CLIENT_KEYS = new Set(["AMRETAILSAC", "AMR"]);
 
         const HILO_OPTIONS = [
             FILTER_PENDIENTE,
@@ -558,6 +559,20 @@
 
         function normalizeText(value) {
             return String(value || "").toUpperCase().trim();
+        }
+
+        function normalizeClientKey(value) {
+            return String(value || "")
+                .toUpperCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^A-Z0-9]/g, "");
+        }
+
+        function isExcludedClient(clienteRaw, clienteNorm) {
+            const rawKey = normalizeClientKey(clienteRaw);
+            const normKey = normalizeClientKey(clienteNorm);
+            return EXCLUDED_CLIENT_KEYS.has(rawKey) || EXCLUDED_CLIENT_KEYS.has(normKey);
         }
 
         function normalizeClientName(clientName) {
@@ -996,21 +1011,27 @@
 
             hiloColHeaderName = rawHeaders[colHilo] || "HILO COSTURA";
 
-            allRows = rows.map((row, idx) => ({
-                rawIndex: idx + 1,
-                rsv: row[colRsv] || "",
-                cliente: row[colCliente] || "",
-                clienteNorm: normalizeClientName(row[colCliente] || ""),
-                estilo: row[colEstilo] || "",
-                color: row[colColor] || "",
-                op: row[colOp] || "",
-                hiloRaw: row[colHilo] || "",
-                sourceOp: row[colOp] || "",
-                sourceCorte: colCorte !== -1 ? (row[colCorte] || "") : "",
-                sourceOpTela: colOpTela !== -1 ? (row[colOpTela] || "") : "",
-                sourcePartida: colPartida !== -1 ? (row[colPartida] || "") : "",
-                sourceColor: row[colColor] || ""
-            }));
+            allRows = rows
+                .map((row, idx) => {
+                    const clienteRaw = row[colCliente] || "";
+                    const clienteNormalized = normalizeClientName(clienteRaw);
+                    return {
+                        rawIndex: idx + 1,
+                        rsv: row[colRsv] || "",
+                        cliente: clienteRaw,
+                        clienteNorm: clienteNormalized,
+                        estilo: row[colEstilo] || "",
+                        color: row[colColor] || "",
+                        op: row[colOp] || "",
+                        hiloRaw: row[colHilo] || "",
+                        sourceOp: row[colOp] || "",
+                        sourceCorte: colCorte !== -1 ? (row[colCorte] || "") : "",
+                        sourceOpTela: colOpTela !== -1 ? (row[colOpTela] || "") : "",
+                        sourcePartida: colPartida !== -1 ? (row[colPartida] || "") : "",
+                        sourceColor: row[colColor] || ""
+                    };
+                })
+                .filter(row => !isExcludedClient(row.cliente, row.clienteNorm));
         }
 
         async function reloadData() {
