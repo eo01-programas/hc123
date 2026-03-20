@@ -424,6 +424,7 @@
                     <option value="EN LABORATORIO">EN LABORATORIO</option>
                     <option value="POR TE&#209;IR">POR TE&#209;IR</option>
                     <option value="EN CALIDAD">EN CALIDAD</option>
+                    <option value="X RE-ENCONAR">X RE-ENCONAR</option>
                     <option value="DESPACHADO">DESPACHADO</option>
                 </select>
             </div>
@@ -501,13 +502,14 @@
     </div>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby2WZW0qUf09n8XMB5tZW4gVA4hRzTIWzgqYcbYKanQrdQu6PfYaDVs6jX43oGNeg00fw/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWV9x39Qw5EcQJtBP9Om8LZdYnFCZ_ikXFuHix9qMo2kWQKMXv2mJ_rLahzNOxRBmhhQ/exec";
 
         const FILTER_ALL = "ALL";
         const FILTER_PENDIENTE = "PENDIENTE";
         const FILTER_EN_LABORATORIO = "EN LABORATORIO";
         const FILTER_POR_TENIR = "POR TE\u00D1IR";
         const FILTER_EN_CALIDAD = "EN CALIDAD";
+        const FILTER_X_RE_ENCONAR = "X RE-ENCONAR";
         const FILTER_DESPACHADO = "DESPACHADO";
 
         const TAB_POR_DESPACHAR = "POR_DESPACHAR";
@@ -519,6 +521,7 @@
             FILTER_EN_LABORATORIO,
             FILTER_POR_TENIR,
             FILTER_EN_CALIDAD,
+            FILTER_X_RE_ENCONAR,
             FILTER_DESPACHADO
         ];
         const HILO_CANON = {
@@ -533,6 +536,7 @@
             "OK": FILTER_EN_CALIDAD,
             "OK COMPRA": FILTER_EN_CALIDAD,
             "OK RE-ASIGNADO": FILTER_EN_CALIDAD,
+            "X RE-ENCONAR": FILTER_X_RE_ENCONAR,
             "DESPACHADO": FILTER_DESPACHADO
         };
 
