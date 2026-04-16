@@ -320,7 +320,7 @@
 
         table {
             width: 100%;
-            min-width: 980px;
+            min-width: 1080px;
             border-collapse: collapse;
             table-layout: fixed;
             font-size: 12px;
@@ -359,6 +359,11 @@
         }
 
         .cell-op {
+            font-weight: 700;
+        }
+
+        .cell-pds {
+            text-align: center;
             font-weight: 700;
         }
 
@@ -425,6 +430,7 @@
                     <option value="POR TE&#209;IR">POR TE&#209;IR</option>
                     <option value="EN CALIDAD">EN CALIDAD</option>
                     <option value="X RE-ENCONAR">X RE-ENCONAR</option>
+                    <option value="ENTREGADO PARCIAL">ENTREGADO PARCIAL</option>
                     <option value="DESPACHADO">DESPACHADO</option>
                 </select>
             </div>
@@ -484,11 +490,12 @@
                         <th style="width: 180px;">ESTILO</th>
                         <th style="width: 150px;">COLOR</th>
                         <th style="width: 110px;">OP</th>
+                        <th style="width: 120px;">PDS GIRADAS</th>
                         <th style="width: 170px;">HILO COSTURA</th>
                     </tr>
                 </thead>
                 <tbody id="tbody-hilos-costura">
-                    <tr><td class="no-data" colspan="6">Cargando registros...</td></tr>
+                    <tr><td class="no-data" colspan="7">Cargando registros...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -522,6 +529,7 @@
             FILTER_POR_TENIR,
             FILTER_EN_CALIDAD,
             FILTER_X_RE_ENCONAR,
+            "ENTREGADO PARCIAL",
             FILTER_DESPACHADO
         ];
         const HILO_CANON = {
@@ -817,7 +825,7 @@
                 const msg = selectedFilter === FILTER_ALL
                     ? "No hay registros para la pesta\u00F1a " + tabLabel + " con los filtros seleccionados."
                     : "No hay registros con HILO COSTURA = " + selectedFilter + " en la pesta\u00F1a " + tabLabel + ".";
-                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"6\">" + escapeHtml(msg) + "</td></tr>";
+                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"7\">" + escapeHtml(msg) + "</td></tr>";
                 return;
             }
 
@@ -839,6 +847,7 @@
                     + "<td title=\"" + escapeHtml(row.estilo) + "\">" + escapeHtml(row.estilo) + "</td>"
                     + "<td title=\"" + escapeHtml(row.color) + "\">" + escapeHtml(row.color) + "</td>"
                     + "<td class=\"cell-op\" title=\"" + escapeHtml(row.op) + "\">" + escapeHtml(row.op) + "</td>"
+                    + "<td class=\"cell-pds\" title=\"" + escapeHtml(row.pdsGiradas) + "\">" + escapeHtml(row.pdsGiradas) + "</td>"
                     + "<td>" + buildSelectHtml(row) + "</td>"
                     + "</tr>";
             }).join("");
@@ -994,6 +1003,7 @@
             const colEstilo = findHeaderIndex(rawHeaders, ["ESTILO"]);
             const colColor = findHeaderIndex(rawHeaders, ["COLOR"]);
             const colOp = findHeaderIndex(rawHeaders, ["OP"]);
+            const colPds = findHeaderIndex(rawHeaders, ["PDS GIRADAS", "PDS_GIRADAS", "PDS"]);
             const colHilo = findHeaderIndex(rawHeaders, ["HILO COSTURA", "HILO_COSTURA"]);
 
             const colCorte = findHeaderIndex(rawHeaders, ["CORTE"]);
@@ -1027,6 +1037,7 @@
                         estilo: row[colEstilo] || "",
                         color: row[colColor] || "",
                         op: row[colOp] || "",
+                        pdsGiradas: colPds !== -1 ? (row[colPds] || "") : "",
                         hiloRaw: row[colHilo] || "",
                         sourceOp: row[colOp] || "",
                         sourceCorte: colCorte !== -1 ? (row[colCorte] || "") : "",
@@ -1056,7 +1067,7 @@
             } catch (error) {
                 console.error("Error cargando datos:", error);
                 const tbody = document.getElementById("tbody-hilos-costura");
-                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"6\">Error al cargar datos: " + escapeHtml(error.message || String(error)) + "</td></tr>";
+                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"7\">Error al cargar datos: " + escapeHtml(error.message || String(error)) + "</td></tr>";
                 document.getElementById("meta-registros").textContent = "0 registros";
                 setStatus("No se pudo cargar la tabla.", "error");
             } finally {
