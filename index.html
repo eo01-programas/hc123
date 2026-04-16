@@ -27,11 +27,19 @@
             box-sizing: border-box;
         }
 
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             margin: 0;
             font-family: Calibri, "Segoe UI", sans-serif;
             background: var(--gray-50);
             color: var(--gray-800);
+            display: flex;
+            flex-direction: column;
         }
 
         header {
@@ -44,7 +52,8 @@
             position: sticky;
             top: 0;
             z-index: 20;
-            overflow-x: auto;
+            overflow: hidden;
+            min-height: 56px;
         }
 
         .brand {
@@ -109,7 +118,9 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            min-height: calc(100vh - 72px);
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
         }
 
         .toolbar {
@@ -119,46 +130,90 @@
             padding: 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: nowrap;
             flex: 1 1 auto;
-            min-width: max-content;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .toolbar-group {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
+            gap: 4px;
+            flex-wrap: nowrap;
+            min-width: 0;
         }
 
         .filter-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--gray-700);
+            white-space: nowrap;
         }
 
         .filter-select {
             border: 1px solid var(--gray-300);
             border-radius: 7px;
-            padding: 6px 8px;
-            font-size: 12px;
+            padding: 4px 6px;
+            font-size: 11px;
             font-weight: 700;
             background: var(--white);
             color: var(--gray-800);
-            min-width: 130px;
+            width: 120px;
+            min-width: 120px;
+            max-width: 120px;
         }
 
         .filter-select.small {
+            width: 92px;
+            min-width: 92px;
+            max-width: 92px;
+        }
+
+        #filter-status {
+            width: 92px;
+            min-width: 92px;
+            max-width: 92px;
+        }
+
+        #filter-hilo-dato {
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
+        }
+
+        #filter-cliente {
+            width: 110px;
             min-width: 110px;
+            max-width: 110px;
+        }
+
+        #filter-rsv {
+            width: 82px;
+            min-width: 82px;
+            max-width: 82px;
+        }
+
+        #filter-color {
+            width: 118px;
+            min-width: 118px;
+            max-width: 118px;
+        }
+
+        #filter-op {
+            width: 92px;
+            min-width: 92px;
+            max-width: 92px;
         }
 
         .switch-inline {
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            margin-left: 4px;
+            gap: 5px;
+            margin-left: 2px;
             user-select: none;
+            white-space: nowrap;
         }
 
         .switch-inline input[type="checkbox"] {
@@ -207,6 +262,9 @@
             padding: 5px 10px;
             background: var(--gray-50);
             color: var(--gray-700);
+            min-width: 104px;
+            text-align: center;
+            white-space: nowrap;
             font-size: 11px;
             font-weight: 700;
         }
@@ -256,12 +314,16 @@
         }
 
         .loader {
-            display: none;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
             font-size: 12px;
             color: var(--gray-700);
             font-weight: 700;
+            min-width: 150px;
+            visibility: hidden;
+            white-space: nowrap;
+            flex: 0 0 auto;
         }
 
         .saving-modal {
@@ -314,13 +376,17 @@
             background: var(--white);
             border: 1px solid var(--gray-200);
             border-radius: 10px;
-            overflow: auto;
+            overflow-x: auto;
+            overflow-y: scroll;
             flex: 1;
+            min-height: 0;
+            max-height: 100%;
+            scrollbar-gutter: stable;
         }
 
         table {
             width: 100%;
-            min-width: 1080px;
+            min-width: 1380px;
             border-collapse: collapse;
             table-layout: fixed;
             font-size: 12px;
@@ -336,10 +402,18 @@
             text-align: left;
             padding: 8px 7px;
             border-bottom: 1px solid var(--gray-200);
+            white-space: nowrap;
+        }
+
+        thead th {
             position: sticky;
             top: 0;
-            z-index: 10;
-            white-space: nowrap;
+            z-index: 20;
+            background: rgb(0, 112, 192);
+        }
+
+        th.th-center {
+            text-align: center;
         }
 
         td {
@@ -360,6 +434,11 @@
 
         .cell-op {
             font-weight: 700;
+            text-align: center;
+        }
+
+        .cell-cliente {
+            text-align: center;
         }
 
         .cell-pds {
@@ -367,9 +446,53 @@
             font-weight: 700;
         }
 
-        .cell-rsv {
-            text-align: right;
+        .cell-status {
+            text-align: center;
             font-weight: 700;
+        }
+
+        .cell-rsv {
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .cell-date {
+            text-align: center;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 1;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .pill-pza {
+            color: #075985;
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.12);
+        }
+
+        .pill-pda {
+            color: #065f46;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.12);
+        }
+
+        .pill-xpedir {
+            color: #9a3412;
+            background: rgba(245, 158, 11, 0.22);
+            border: 1px solid rgba(245, 158, 11, 0.34);
+        }
+
+        .pill-ok-dark {
+            color: #ffffff;
+            background: rgba(13, 60, 120, 0.9);
+            border: 1px solid rgba(13, 60, 120, 0.95);
         }
 
         .no-data {
@@ -412,6 +535,28 @@
             header {
                 padding: 8px 10px;
             }
+
+            .toolbar {
+                gap: 5px;
+            }
+
+            .toolbar-group {
+                gap: 4px;
+            }
+
+            .brand {
+                font-size: 14px;
+            }
+
+            .filter-select {
+                min-width: 84px;
+                max-width: 120px;
+            }
+
+            .filter-select.small {
+                min-width: 76px;
+                max-width: 112px;
+            }
         }
     </style>
 </head>
@@ -420,6 +565,12 @@
         <div class="toolbar">
             <div class="toolbar-group">
                 <div class="brand">HILO COSTURA - PCP Textil</div>
+            </div>
+            <div class="toolbar-group">
+                <span class="filter-label">STATUS:</span>
+                <select id="filter-status" class="filter-select small" onchange="onStatusFilterChange(this.value)">
+                    <option value="ALL">Todos</option>
+                </select>
             </div>
             <div class="toolbar-group">
                 <span class="filter-label">Filtro:</span>
@@ -485,17 +636,21 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 60px;">RSV</th>
-                        <th style="width: 130px;">CLIENTE</th>
+                        <th class="th-center" style="width: 90px;">HOD</th>
+                        <th class="th-center" style="width: 90px;">F.ING</th>
+                        <th class="th-center" style="width: 60px;">RSV</th>
+                        <th class="th-center" style="width: 130px;">CLIENTE</th>
                         <th style="width: 180px;">ESTILO</th>
                         <th style="width: 150px;">COLOR</th>
-                        <th style="width: 110px;">OP</th>
-                        <th style="width: 120px;">PDS GIRADAS</th>
+                        <th class="th-center" style="width: 110px;">OP</th>
+                        <th class="th-center" style="width: 120px;">PDS GIRADAS</th>
+                        <th class="th-center" style="width: 120px;">PDA</th>
+                        <th class="th-center" style="width: 110px;">STATUS</th>
                         <th style="width: 170px;">HILO COSTURA</th>
                     </tr>
                 </thead>
                 <tbody id="tbody-hilos-costura">
-                    <tr><td class="no-data" colspan="7">Cargando registros...</td></tr>
+                    <tr><td class="no-data" colspan="11">Cargando registros...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -510,6 +665,8 @@
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWV9x39Qw5EcQJtBP9Om8LZdYnFCZ_ikXFuHix9qMo2kWQKMXv2mJ_rLahzNOxRBmhhQ/exec";
+        const SHEET_ID = "18cQuwqerdMggAeJ8TCUKA7-gujXsA91-CRMUTNpr8aQ";
+        const HILO_CACHE_KEY = "hilo_costura_sheet_cache_v1";
 
         const FILTER_ALL = "ALL";
         const FILTER_PENDIENTE = "PENDIENTE";
@@ -551,6 +708,7 @@
         let rawHeaders = [];
         let allRows = [];
         let selectedFilter = FILTER_ALL;
+        let selectedStatusFilter = FILTER_ALL;
         let selectedTab = TAB_POR_DESPACHAR;
         let selectedClientFilter = FILTER_ALL;
         let selectedRsvFilter = FILTER_ALL;
@@ -560,6 +718,8 @@
         let uiBusy = false;
         let hiloColHeaderName = "HILO COSTURA";
         const savingGroupKeys = new Set();
+        let activeLoadToken = 0;
+        let selectOptionsHtmlCache = new Map();
 
         function normalizeHeaderName(value) {
             return String(value || "")
@@ -611,9 +771,193 @@
                 .replace(/'/g, "&#39;");
         }
 
+        function getCachedSheetData() {
+            try {
+                const raw = localStorage.getItem(HILO_CACHE_KEY);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function saveSheetDataCache(data) {
+            try {
+                localStorage.setItem(HILO_CACHE_KEY, JSON.stringify(data));
+            } catch (e) {
+                // Si el navegador bloquea el cache o se llena, seguimos sin cache.
+            }
+        }
+
+        function normalizeSheetDataArray(data) {
+            if (!Array.isArray(data) || !data.length) return null;
+            const firstRow = data[0];
+            if (!Array.isArray(firstRow) || !firstRow.length) return null;
+            return data;
+        }
+
+        function sheetDataFromGviz(jsonResponse) {
+            if (!jsonResponse || !jsonResponse.table) {
+                throw new Error("Datos invalidos del sheet.");
+            }
+
+            const headers = (jsonResponse.table.cols || []).map(col => String((col && (col.label || col.id)) || "").trim());
+            const rowsRaw = (jsonResponse.table.rows || []).map(r => {
+                const cells = (r && Array.isArray(r.c)) ? r.c : [];
+                return cells.map(cell => (cell && cell.v !== null && cell.v !== undefined) ? cell.v : "");
+            });
+
+            if (!headers.length) {
+                throw new Error("No se encontraron encabezados.");
+            }
+
+            return [headers, ...rowsRaw];
+        }
+
+        function resetHiloSelectOptionsCache() {
+            selectOptionsHtmlCache = new Map();
+        }
+
+        function getHiloSelectOptionsHtml(currentValue) {
+            const current = canonicalizeHiloValue(currentValue);
+            if (selectOptionsHtmlCache.has(current)) {
+                return selectOptionsHtmlCache.get(current);
+            }
+
+            const opts = HILO_OPTIONS.slice();
+            if (!opts.includes(current)) opts.unshift(current);
+
+            const html = opts.map(opt => {
+                const selected = opt === current ? " selected" : "";
+                return "<option value=\"" + escapeHtml(opt) + "\"" + selected + ">" + escapeHtml(opt) + "</option>";
+            }).join("");
+
+            selectOptionsHtmlCache.set(current, html);
+            return html;
+        }
+
+        function parseHiloDateValue(rawValue) {
+            if (rawValue instanceof Date && !isNaN(rawValue.getTime())) return rawValue;
+
+            if (typeof rawValue === "number" && rawValue > 30000) {
+                return new Date(Math.round((rawValue - 25569) * 86400 * 1000));
+            }
+
+            const text = String(rawValue || "").trim();
+            if (!text) return null;
+
+            const dateMatch = text.match(/^Date\((\d+),(\d+),(\d+)(?:,\d+,\d+,\d+)?\)$/);
+            if (dateMatch) {
+                return new Date(parseInt(dateMatch[1], 10), parseInt(dateMatch[2], 10), parseInt(dateMatch[3], 10));
+            }
+
+            const isoMatch = text.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s].*)?$/);
+            if (isoMatch) {
+                return new Date(parseInt(isoMatch[1], 10), parseInt(isoMatch[2], 10) - 1, parseInt(isoMatch[3], 10));
+            }
+
+            const dmMatch = text.match(/^(\d{1,2})[\/\-]([A-Za-z]{3,}|\d{1,2})[\/\-](\d{2,4})$/);
+            if (dmMatch) {
+                const day = parseInt(dmMatch[1], 10);
+                const monthToken = dmMatch[2].toLowerCase().slice(0, 3);
+                const yearNum = parseInt(dmMatch[3], 10);
+                const monthMap = {
+                    ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5,
+                    jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11
+                };
+                let month = -1;
+                if (/^\d{1,2}$/.test(dmMatch[2])) {
+                    month = parseInt(dmMatch[2], 10) - 1;
+                } else {
+                    month = monthMap[monthToken] ?? -1;
+                }
+                if (month >= 0) {
+                    const year = yearNum < 100 ? 2000 + yearNum : yearNum;
+                    return new Date(year, month, day);
+                }
+            }
+
+            const fallback = new Date(text);
+            if (!isNaN(fallback.getTime())) return fallback;
+            return null;
+        }
+
+        function formatHiloDateShort(rawValue) {
+            const dt = parseHiloDateValue(rawValue);
+            if (!dt) return String(rawValue || "").trim();
+            const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+            const day = String(dt.getDate()).padStart(2, "0");
+            const month = meses[dt.getMonth()] || "";
+            return day + "/" + month;
+        }
+
+        function formatHiloDateCell(rawValue) {
+            if (rawValue === null || rawValue === undefined || rawValue === "") return "";
+
+            const parts = Array.isArray(rawValue)
+                ? rawValue
+                : String(rawValue).split(/\r?\n|;|\|/);
+
+            const formatted = parts
+                .map(part => formatHiloDateShort(part))
+                .map(part => String(part || "").trim())
+                .filter(Boolean);
+
+            return formatted.join(" - ");
+        }
+
+        function getHabilitadoStatusValue(row) {
+            const rutaTela = String(row.rutaTela || "").toUpperCase().trim();
+            const estadoCorte = String(row.estadoCorte || "").toUpperCase().trim();
+            const estadoBloqueo = String(row.estadoBloqueo || "").toUpperCase().trim();
+            const estadoLavada = String(row.estadoLavada || "").toUpperCase().trim();
+            const evNorm = String(row.estadoEnumerado || "").toUpperCase().trim();
+
+            if (rutaTela === "ACABADA") {
+                if (estadoCorte === "" || estadoCorte === "X PROG") return "x cortar";
+                if (estadoCorte === "PROG" || estadoCorte === "PROG 1T" || estadoCorte === "PROG 2T" || estadoCorte === "PROG 3T") return "Proc Corte";
+                if (estadoCorte === "OK") {
+                    if (evNorm === "" || evNorm === "X PROG") return "x enm";
+                    if (evNorm === "OK ENM" || evNorm === "OK PAQUETEO") return "x Hab";
+                    return "x enm";
+                }
+            } else if (rutaTela === "LAVADA") {
+                if (estadoBloqueo === "") return "x pedir";
+                if (estadoBloqueo.indexOf("PROG") !== -1) return "x bloq";
+                if (estadoBloqueo === "OK") {
+                    if (estadoLavada !== "OK") return "x lavar";
+                    if (estadoCorte === "" || estadoCorte === "X PROG") return "x cortar";
+                    if (estadoCorte === "PROG" || estadoCorte === "PROG 1T" || estadoCorte === "PROG 2T" || estadoCorte === "PROG 3T") return "Proc Corte";
+                    if (estadoCorte === "OK") {
+                        if (evNorm === "OK ENM" || evNorm === "OK PAQUETEO") return "x Hab";
+                        return "x enm";
+                    }
+                }
+                return "x bloq";
+            }
+
+            return "";
+        }
+
+        function renderStatusPill(statusValue) {
+            const value = String(statusValue || "").trim();
+            if (!value) return "";
+
+            const statusUpper = value.toUpperCase();
+            if (statusUpper.indexOf("X CORTAR") !== -1) return '<span class="pill pill-pda">' + escapeHtml(value) + "</span>";
+            if (statusUpper.indexOf("PROC CORTE") !== -1) return '<span class="pill pill-pza">' + escapeHtml(value) + "</span>";
+            if (statusUpper.indexOf("X PEDIR") !== -1) return '<span class="pill pill-xpedir">' + escapeHtml(value) + "</span>";
+            if (statusUpper.indexOf("X ENM") !== -1) return '<span class="pill pill-pda">' + escapeHtml(value) + "</span>";
+            if (statusUpper.indexOf("X HAB") !== -1) return '<span class="pill pill-ok-dark">' + escapeHtml(value) + "</span>";
+            if (statusUpper.indexOf("X BLOQ") !== -1) return '<span class="pill pill-pda">' + escapeHtml(value) + "</span>";
+            if (statusUpper.indexOf("X LAVAR") !== -1) return '<span class="pill pill-pda">' + escapeHtml(value) + "</span>";
+            return escapeHtml(value);
+        }
+
         function showLoader(show) {
             const el = document.getElementById("loader");
-            if (el) el.style.display = show ? "inline-flex" : "none";
+            if (el) el.style.visibility = show ? "visible" : "hidden";
         }
 
         function setUiBusy(show, message) {
@@ -658,6 +1002,10 @@
             return raw;
         }
 
+        function canonicalizeStatusValue(value) {
+            return normalizeText(value);
+        }
+
         function rowMatchesTab(row) {
             const isDespachado = canonicalizeHiloValue(row.hiloRaw) === FILTER_DESPACHADO;
             return selectedTab === TAB_DESPACHADO ? isDespachado : !isDespachado;
@@ -670,10 +1018,18 @@
             return opNorm + "||" + colorNorm;
         }
 
-        function getRowsAfterHiloDataFilter() {
+        function rowMatchesStatusFilter(row) {
+            if (selectedStatusFilter === FILTER_ALL) return true;
+            return canonicalizeStatusValue(getHabilitadoStatusValue(row)) === canonicalizeStatusValue(selectedStatusFilter);
+        }
+
+        function getRowsAfterPrimaryFilters() {
             const tabRows = allRows.filter(rowMatchesTab);
-            if (selectedFilter === FILTER_ALL) return tabRows;
-            return tabRows.filter(r => canonicalizeHiloValue(r.hiloRaw) === selectedFilter);
+            const hiloRows = (selectedFilter === FILTER_ALL)
+                ? tabRows
+                : tabRows.filter(r => canonicalizeHiloValue(r.hiloRaw) === selectedFilter);
+            if (selectedStatusFilter === FILTER_ALL) return hiloRows;
+            return hiloRows.filter(rowMatchesStatusFilter);
         }
 
         function rowMatchesCurrentSideFilters(row, excludeKey) {
@@ -685,11 +1041,19 @@
         }
 
         function getRowsForFilterOptions(filterKey) {
-            return getRowsAfterHiloDataFilter().filter(row => rowMatchesCurrentSideFilters(row, filterKey));
+            return getRowsAfterPrimaryFilters().filter(row => rowMatchesCurrentSideFilters(row, filterKey));
+        }
+
+        function getRowsForStatusOptions() {
+            const tabRows = allRows.filter(rowMatchesTab);
+            const hiloRows = (selectedFilter === FILTER_ALL)
+                ? tabRows
+                : tabRows.filter(r => canonicalizeHiloValue(r.hiloRaw) === selectedFilter);
+            return hiloRows.filter(row => rowMatchesCurrentSideFilters(row, null));
         }
 
         function getFilteredRows() {
-            const rows = getRowsAfterHiloDataFilter().filter(row => rowMatchesCurrentSideFilters(row, null));
+            const rows = getRowsAfterPrimaryFilters().filter(row => rowMatchesCurrentSideFilters(row, null));
             rows.sort((a, b) => {
                 const byClient = String(a.clienteNorm || "").localeCompare(String(b.clienteNorm || ""), undefined, { sensitivity: "base" });
                 if (byClient !== 0) return byClient;
@@ -720,6 +1084,11 @@
         }
 
         function rebuildRightFilters() {
+            const statusRows = getRowsForStatusOptions();
+            const statusOptions = Array.from(new Set(statusRows.map(r => String(getHabilitadoStatusValue(r) || "").trim()).filter(Boolean)))
+                .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+            selectedStatusFilter = fillSelectOptions("filter-status", statusOptions, selectedStatusFilter) || FILTER_ALL;
+
             const clientRows = getRowsForFilterOptions("client");
             const clients = Array.from(new Set(clientRows.map(r => String(r.clienteNorm || "").trim()).filter(Boolean)))
                 .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
@@ -741,15 +1110,22 @@
             selectedOpFilter = fillSelectOptions("filter-op", ops, selectedOpFilter) || FILTER_ALL;
         }
 
-        function updateMeta() {
+        function updateMeta(count) {
             const meta = document.getElementById("meta-registros");
             if (!meta) return;
-            meta.textContent = getFilteredRows().length.toLocaleString("es-ES") + " registros";
+            meta.textContent = Number(count || 0).toLocaleString("es-ES") + " registros";
         }
 
         function onFilterChange(value) {
             if (uiBusy) return;
             selectedFilter = value || FILTER_ALL;
+            rebuildRightFilters();
+            renderTable();
+        }
+
+        function onStatusFilterChange(value) {
+            if (uiBusy) return;
+            selectedStatusFilter = value || FILTER_ALL;
             rebuildRightFilters();
             renderTable();
         }
@@ -803,36 +1179,32 @@
         }
 
         function buildSelectHtml(row) {
-            const current = canonicalizeHiloValue(row.hiloRaw);
-            const opts = HILO_OPTIONS.slice();
-            if (!opts.includes(current)) opts.unshift(current);
-
-            const optionsHtml = opts.map(opt => {
-                const selected = opt === current ? " selected" : "";
-                return "<option value=\"" + escapeHtml(opt) + "\"" + selected + ">" + escapeHtml(opt) + "</option>";
-            }).join("");
-
-            return "<select class=\"hilo-select\" data-row-index=\"" + row.rawIndex + "\" onchange=\"handleHiloChange(" + row.rawIndex + ", this.value, this)\">" + optionsHtml + "</select>";
+            return "<select class=\"hilo-select\" data-row-index=\"" + row.rawIndex + "\" onchange=\"handleHiloChange(" + row.rawIndex + ", this.value, this)\">" + getHiloSelectOptionsHtml(row.hiloRaw) + "</select>";
         }
 
         function renderTable() {
             const tbody = document.getElementById("tbody-hilos-costura");
             const filtered = getFilteredRows();
-            updateMeta();
+            updateMeta(filtered.length);
 
             if (!filtered.length) {
                 const tabLabel = selectedTab === TAB_DESPACHADO ? "DESPACHADO" : "POR DESPACHAR";
-                const msg = selectedFilter === FILTER_ALL
-                    ? "No hay registros para la pesta\u00F1a " + tabLabel + " con los filtros seleccionados."
-                    : "No hay registros con HILO COSTURA = " + selectedFilter + " en la pesta\u00F1a " + tabLabel + ".";
-                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"7\">" + escapeHtml(msg) + "</td></tr>";
+                const parts = [];
+                if (selectedStatusFilter !== FILTER_ALL) parts.push("STATUS = " + selectedStatusFilter);
+                if (selectedFilter !== FILTER_ALL) parts.push("HILO COSTURA = " + selectedFilter);
+                const msg = parts.length
+                    ? "No hay registros con " + parts.join(" y ") + " en la pesta\u00F1a " + tabLabel + "."
+                    : "No hay registros para la pesta\u00F1a " + tabLabel + " con los filtros seleccionados.";
+                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"11\">" + escapeHtml(msg) + "</td></tr>";
                 return;
             }
 
             let lastColorKey = null;
             let currentBandClass = "group-a";
 
-            tbody.innerHTML = filtered.map((row) => {
+            let html = "";
+            for (let idx = 0; idx < filtered.length; idx++) {
+                const row = filtered[idx];
                 const colorKey = String(row.color || "").trim().toUpperCase();
                 if (lastColorKey !== null && colorKey !== lastColorKey) {
                     currentBandClass = (currentBandClass === "group-a") ? "group-b" : "group-a";
@@ -840,17 +1212,23 @@
                 lastColorKey = colorKey;
 
                 const trClass = currentBandClass;
-                return ""
+                const statusValue = getHabilitadoStatusValue(row);
+                html += ""
                     + "<tr class=\"" + trClass + "\">"
+                    + "<td class=\"cell-date\">" + escapeHtml(formatHiloDateCell(row.hod)) + "</td>"
+                    + "<td class=\"cell-date\">" + escapeHtml(formatHiloDateCell(row.fing)) + "</td>"
                     + "<td class=\"cell-rsv\">" + escapeHtml(row.rsv) + "</td>"
-                    + "<td title=\"" + escapeHtml(row.clienteNorm) + "\">" + escapeHtml(row.clienteNorm) + "</td>"
+                    + "<td class=\"cell-cliente\" title=\"" + escapeHtml(row.clienteNorm) + "\">" + escapeHtml(row.clienteNorm) + "</td>"
                     + "<td title=\"" + escapeHtml(row.estilo) + "\">" + escapeHtml(row.estilo) + "</td>"
                     + "<td title=\"" + escapeHtml(row.color) + "\">" + escapeHtml(row.color) + "</td>"
                     + "<td class=\"cell-op\" title=\"" + escapeHtml(row.op) + "\">" + escapeHtml(row.op) + "</td>"
                     + "<td class=\"cell-pds\" title=\"" + escapeHtml(row.pdsGiradas) + "\">" + escapeHtml(row.pdsGiradas) + "</td>"
+                    + "<td class=\"cell-pds\" title=\"" + escapeHtml(row.pda) + "\">" + escapeHtml(row.pda) + "</td>"
+                    + "<td class=\"cell-status\" title=\"" + escapeHtml(statusValue) + "\">" + renderStatusPill(statusValue) + "</td>"
                     + "<td>" + buildSelectHtml(row) + "</td>"
                     + "</tr>";
-            }).join("");
+            }
+            tbody.innerHTML = html;
         }
 
         function isLikelyCorsFetchError(error) {
@@ -1004,6 +1382,14 @@
             const colColor = findHeaderIndex(rawHeaders, ["COLOR"]);
             const colOp = findHeaderIndex(rawHeaders, ["OP"]);
             const colPds = findHeaderIndex(rawHeaders, ["PDS GIRADAS", "PDS_GIRADAS", "PDS"]);
+            const colPda = findHeaderIndex(rawHeaders, ["PRENDA", "PDA"]);
+            const colHod = findHeaderIndex(rawHeaders, ["F. DESPACHO", "F_DESPACHO", "F. DESP", "F DESPACHO"]);
+            const colFIng = findHeaderIndex(rawHeaders, ["F.ING.COST", "F_ING_COST", "F. ING.COST", "F ING COST", "F.ING", "F_ING", "F. ING", "F ING"]);
+            const colRutaTela = findHeaderIndex(rawHeaders, ["RUTA TELA", "RUTA_TELA", "RUTA"]);
+            const colEstadoCorte = findHeaderIndex(rawHeaders, ["STATUS_CORTE", "STATUS", "estado_corte", "ESTADO_CORTE"]);
+            const colEstadoBloqueo = findHeaderIndex(rawHeaders, ["estado_bloqueo", "ESTADO_BLOQUEO"]);
+            const colEstadoLavada = findHeaderIndex(rawHeaders, ["estado_lavada", "ESTADO_LAVADA"]);
+            const colEstadoEnumerado = findHeaderIndex(rawHeaders, ["estado_enumerado", "ESTADO_ENUMERADO", "ESTADO ENUMERADO"]);
             const colHilo = findHeaderIndex(rawHeaders, ["HILO COSTURA", "HILO_COSTURA"]);
 
             const colCorte = findHeaderIndex(rawHeaders, ["CORTE"]);
@@ -1024,6 +1410,7 @@
             }
 
             hiloColHeaderName = rawHeaders[colHilo] || "HILO COSTURA";
+            resetHiloSelectOptionsCache();
 
             allRows = rows
                 .map((row, idx) => {
@@ -1031,6 +1418,8 @@
                     const clienteNormalized = normalizeClientName(clienteRaw);
                     return {
                         rawIndex: idx + 1,
+                        hod: colHod !== -1 ? row[colHod] : "",
+                        fing: colFIng !== -1 ? row[colFIng] : "",
                         rsv: row[colRsv] || "",
                         cliente: clienteRaw,
                         clienteNorm: clienteNormalized,
@@ -1038,6 +1427,12 @@
                         color: row[colColor] || "",
                         op: row[colOp] || "",
                         pdsGiradas: colPds !== -1 ? (row[colPds] || "") : "",
+                        pda: colPda !== -1 ? (row[colPda] || "") : "",
+                        rutaTela: colRutaTela !== -1 ? (row[colRutaTela] || "") : "",
+                        estadoCorte: colEstadoCorte !== -1 ? (row[colEstadoCorte] || "") : "",
+                        estadoBloqueo: colEstadoBloqueo !== -1 ? (row[colEstadoBloqueo] || "") : "",
+                        estadoLavada: colEstadoLavada !== -1 ? (row[colEstadoLavada] || "") : "",
+                        estadoEnumerado: colEstadoEnumerado !== -1 ? (row[colEstadoEnumerado] || "") : "",
                         hiloRaw: row[colHilo] || "",
                         sourceOp: row[colOp] || "",
                         sourceCorte: colCorte !== -1 ? (row[colCorte] || "") : "",
@@ -1049,35 +1444,126 @@
                 .filter(row => !isExcludedClient(row.cliente, row.clienteNorm));
         }
 
+        function loadDataFromWebApp() {
+            return fetch(WEB_APP_URL).then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
+                }
+                return response.json();
+            });
+        }
+
+        function loadDataFromGviz(loadToken) {
+            return new Promise((resolve, reject) => {
+                const callbackName = "__hiloCosturaGvizCallback_" + loadToken + "_" + Date.now();
+                const script = document.createElement("script");
+                let finished = false;
+
+                const cleanup = () => {
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                    try {
+                        delete window[callbackName];
+                    } catch (e) {
+                        window[callbackName] = undefined;
+                    }
+                };
+
+                window[callbackName] = function (jsonResponse) {
+                    if (finished) return;
+                    finished = true;
+                    try {
+                        if (loadToken !== activeLoadToken) {
+                            resolve(null);
+                            return;
+                        }
+                        resolve(sheetDataFromGviz(jsonResponse));
+                    } catch (error) {
+                        reject(error);
+                    } finally {
+                        cleanup();
+                    }
+                };
+
+                script.async = true;
+                script.onerror = function () {
+                    if (finished) return;
+                    finished = true;
+                    cleanup();
+                    reject(new Error("No se pudo cargar Google Sheets."));
+                };
+                script.src = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=responseHandler:" + callbackName;
+                document.body.appendChild(script);
+            });
+        }
+
+        function renderCachedDataIfAvailable() {
+            const cachedData = normalizeSheetDataArray(getCachedSheetData());
+            if (!cachedData) return false;
+
+            try {
+                processData(cachedData);
+                rebuildRightFilters();
+                renderTable();
+                return true;
+            } catch (error) {
+                console.warn("Cache de Hilo Costura invalido, se omite.", error);
+                return false;
+            }
+        }
+
         async function reloadData() {
+            const loadToken = ++activeLoadToken;
             showLoader(true);
             setStatus("", "");
             selectedTab = TAB_POR_DESPACHAR;
             setActiveTabUi();
 
+            const hasCache = renderCachedDataIfAvailable();
+            if (hasCache) {
+                showLoader(false);
+            }
+
             try {
-                const response = await fetch(WEB_APP_URL);
-                if (!response.ok) {
-                    throw new Error("HTTP " + response.status);
+                let data = null;
+                try {
+                    data = await loadDataFromGviz(loadToken);
+                    if (!data) return;
+                } catch (gvizError) {
+                    console.warn("Fallo gviz, usando web app como respaldo.", gvizError);
+                    data = await loadDataFromWebApp();
                 }
-                const data = await response.json();
+
+                if (loadToken !== activeLoadToken) return;
+
                 processData(data);
+                saveSheetDataCache(data);
                 rebuildRightFilters();
                 renderTable();
+                if (hasCache) {
+                    setStatus("Datos actualizados.", "ok");
+                }
             } catch (error) {
+                if (loadToken !== activeLoadToken) return;
                 console.error("Error cargando datos:", error);
                 const tbody = document.getElementById("tbody-hilos-costura");
-                tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"7\">Error al cargar datos: " + escapeHtml(error.message || String(error)) + "</td></tr>";
-                document.getElementById("meta-registros").textContent = "0 registros";
-                setStatus("No se pudo cargar la tabla.", "error");
+                if (!hasCache) {
+                    tbody.innerHTML = "<tr><td class=\"no-data\" colspan=\"11\">Error al cargar datos: " + escapeHtml(error.message || String(error)) + "</td></tr>";
+                    document.getElementById("meta-registros").textContent = "0 registros";
+                } else {
+                    setStatus("No se pudo actualizar. Se muestra la ultima version guardada.", "error");
+                }
             } finally {
-                showLoader(false);
+                if (loadToken === activeLoadToken) {
+                    showLoader(false);
+                }
             }
         }
 
         window.addEventListener("DOMContentLoaded", () => {
             setActiveTabUi();
-            reloadData();
+            requestAnimationFrame(() => reloadData());
         });
     </script>
 </body>
